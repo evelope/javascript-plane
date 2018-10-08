@@ -3,7 +3,7 @@ var http = require("http");
 //设置主机名
 var hostName = '127.0.0.1';
 //设置端口
-var port = 8080;
+var port = 80;
 //创建服务
 var server = http.createServer(function (req, res) {
     res.setHeader('Content-Type', 'text/plain');
