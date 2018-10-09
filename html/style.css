@@ -2,17 +2,23 @@
 	margin: 0;
 	padding: 0;
 }
+html,body{
+	height: 100%;
+}
 #game{
-	width: 320px;
-	height: 568px;
-	margin: 50px auto;
+	width: 100%;
+	height: 100%;
 	overflow: hidden;
 }
 #gameStart{
 	width: 100%;
 	height: 100%;
-	background: url(image/ks.png);
+	background:#fff url(image/ks.png) top center no-repeat;
+	background-size: cover; 
 	position: relative;
+	display: flex;
+	justify-content: center;
+	align-items: flex-end;
 	/*display: none;*/
 }
 #gameStart span{
@@ -22,9 +28,7 @@
 	line-height: 32px;
 	border-radius: 8px;
 	display: block;
-	position: absolute;
-	left: 80px;
-	bottom: 100px;
+	margin-bottom: 100px;
 	font-size: 24px;
 	letter-spacing: 2px;
 	font-weight: bolder;
