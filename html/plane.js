@@ -44,12 +44,11 @@ window.onload = function () {
 
 		if (bIsIpad || bIsIphone || bIsMidp || bIsUc7 || bIsUc || bIsCE || bIsWM) {
 			return true //移动端
-			alert(1)
 		} else {
-			alert(2)
 			return false //pc端
 		}
 	}
+	browserRedirect()?alert('检测出您使用的是移动设备'):alert('检测出您使用的是PC设备');
 	Game.prototype = {
 		init: function () {
 			this.start();
