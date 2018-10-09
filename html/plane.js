@@ -32,6 +32,22 @@ window.onload = function () {
 		};
 		this.init();
 	}
+	function browserRedirect() {
+		var sUserAgent = navigator.userAgent.toLowerCase();
+		var bIsIpad = sUserAgent.match(/ipad/i) == 'ipad';
+		var bIsIphone = sUserAgent.match(/iphone os/i) == 'iphone os';
+		var bIsMidp = sUserAgent.match(/midp/i) == 'midp';
+		var bIsUc7 = sUserAgent.match(/rv:1.2.3.4/i) == 'rv:1.2.3.4';
+		var bIsUc = sUserAgent.match(/ucweb/i) == 'web';
+		var bIsCE = sUserAgent.match(/windows ce/i) == 'windows ce';
+		var bIsWM = sUserAgent.match(/windows mobile/i) == 'windows mobile';
+
+		if (bIsIpad || bIsIphone || bIsMidp || bIsUc7 || bIsUc || bIsCE || bIsWM) {
+			return true //移动端
+		} else {
+			return false //pc端
+		}
+	}
 	Game.prototype = {
 		init: function () {
 			this.start();
@@ -55,14 +71,16 @@ window.onload = function () {
 		myMove: function (evt) {
 			var that = this;
 			document.mousemoveRun = this.myMoveRun(that);
-			this.addEvent(document, "mousemove", document.mousemoveRun);
+			var type = browserRedirect()?"touchmove":"mousemove";
+			this.addEvent(document, type, document.mousemoveRun);
 		},
 		myMoveRun: function (that) {
 			return function (evt) {
 				// 执行事件
 				var e = evt || window.event;
-				var mouse_x = e.x || e.pageX
-					, mouse_y = e.y || e.pageY;
+				var etype = browserRedirect()?e.touches[0]:e;
+				var mouse_x = e.x || etype.pageX
+					, mouse_y = e.y || etype.pageY;
 				var myPlaneW = that.getStyle(that.myPlane, "width")
 					, myPlaneH = that.getStyle(that.myPlane, "height");
 				var gameW = that.getStyle(that.game, "width")
