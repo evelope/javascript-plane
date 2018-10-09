@@ -94,6 +94,7 @@ window.onload = function () {
 			return function (evt) {
 				// 执行事件
 				var e = evt || window.event;
+				e.preventDefault();
 				var etype = browserRedirect() ? e.touches[0] : e;
 				var mouse_x = e.x || etype.pageX
 					, mouse_y = e.y || etype.pageY;
