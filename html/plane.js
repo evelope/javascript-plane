@@ -44,7 +44,9 @@ window.onload = function () {
 
 		if (bIsIpad || bIsIphone || bIsMidp || bIsUc7 || bIsUc || bIsCE || bIsWM) {
 			return true //移动端
+			alert(1)
 		} else {
+			alert(2)
 			return false //pc端
 		}
 	}
