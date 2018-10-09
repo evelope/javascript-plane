@@ -1,267 +1,436 @@
-window.onload = function () {
-	function Game(options) {
-		this.status = false;
-		this.game = Game.$("game");
-		this.myPlane = Game.$("myPlane");
-		this.gameStart = Game.$("gameStart");
-		this.startGame = this.gameStart.firstElementChild;
-		this.gameEnter = Game.$("gameEnter");
-		this.bulletsParent = Game.$("bullets");
-		this.bullets = [];
-		this.bulletW = 6;
-		this.bulletH = 14;
-		this.enemy = Game.$("enemy");
-		this.scores = 0;
-		this.scoresContent = Game.$("scoreTotal").firstElementChild.firstElementChild;
-		this.enemyObj = {
-			enemy1: {
-				width: "34px",
-				height: "24px",
-				score: 100
-			},
-			enemy2: {
-				width: "46px",
-				height: "60px",
-				score: 500
-			},
-			enemy3: {
-				width: "110px",
-				height: "164px",
-				score: 1000
-			}
-		};
-		this.init();
+//获得主界面
+var mainDiv = document.getElementById("maindiv");
+//获得开始界面
+var startdiv = document.getElementById("startdiv");
+//获得游戏中分数显示界面
+var scorediv = document.getElementById("scorediv");
+//获得分数界面
+var scorelabel = document.getElementById("label");
+//获得暂停按钮
+var zantingbutton = document.getElementById("zanting");
+//获得暂停界面
+var suspenddiv = document.getElementById("suspenddiv");
+//获得游戏结束界面
+var enddiv = document.getElementById("enddiv");
+//获得游戏结束后分数统计界面
+var planscore = document.getElementById("planscore");
+//获得游戏结束后分数统计界面
+var shebei = document.getElementById("shebei");
+//初始化分数
+var scores = 0;
+//根据设备类型给出是鼠标事件还是触屏事件
+var movetype = browserRedirect()?"touchmove":"mousemove";
+/*
+ 检测设备类型
+*/ 
+function browserRedirect() {
+	// var sUserAgent = navigator.userAgent.toLowerCase();
+	// var bIsIpad = sUserAgent.match(/ipad/i) == 'ipad';
+	// var bIsIphone = sUserAgent.match(/iphone os/i) == 'iphone os';
+	// var bIsMidp = sUserAgent.match(/midp/i) == 'midp';
+	// var bIsUc7 = sUserAgent.match(/rv:1.2.3.4/i) == 'rv:1.2.3.4';
+	// var bIsUc = sUserAgent.match(/ucweb/i) == 'web';
+	// var bIsCE = sUserAgent.match(/windows ce/i) == 'windows ce';
+	// var bIsWM = sUserAgent.match(/windows mobile/i) == 'windows mobile';
+
+	// if (bIsIpad || bIsIphone || bIsMidp || bIsUc7 || bIsUc || bIsCE || bIsWM) {
+	// 	return true //移动端
+	// } else {
+	// 	return false //pc端
+	// }
+
+	// if (/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
+	// 	return true //移动端
+	// } else {
+	// 	return false //pc端
+	// }
+	if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) {
+		return true //移动端
+	} else if (/(Android)/i.test(navigator.userAgent)) {
+		return true //移动端
+	} else {
+		return false //移动端
+	};
+}
+browserRedirect() ? shebei.innerText="检测出您使用的是移动设备" : shebei.innerText="检测出您使用的是PC设备";
+/*
+ 创建飞机类
+ */
+function plan(hp, X, Y, sizeX, sizeY, score, dietime, sudu, boomimage, imagesrc) {
+	this.planX = X;
+	this.planY = Y;
+	this.imagenode = null;
+	this.planhp = hp;
+	this.planscore = score;
+	this.plansizeX = sizeX;
+	this.plansizeY = sizeY;
+	this.planboomimage = boomimage;
+	this.planisdie = false;
+	this.plandietimes = 0;
+	this.plandietime = dietime;
+	this.plansudu = sudu;
+	//行为
+	/*
+	移动行为
+		 */
+	this.planmove = function () {
+		if (scores <= 50000) {
+			this.imagenode.style.top = this.imagenode.offsetTop + this.plansudu + "px";
+		}
+		else if (scores > 50000 && scores <= 100000) {
+			this.imagenode.style.top = this.imagenode.offsetTop + this.plansudu + 1 + "px";
+		}
+		else if (scores > 100000 && scores <= 150000) {
+			this.imagenode.style.top = this.imagenode.offsetTop + this.plansudu + 2 + "px";
+		}
+		else if (scores > 150000 && scores <= 200000) {
+			this.imagenode.style.top = this.imagenode.offsetTop + this.plansudu + 3 + "px";
+		}
+		else if (scores > 200000 && scores <= 300000) {
+			this.imagenode.style.top = this.imagenode.offsetTop + this.plansudu + 4 + "px";
+		}
+		else {
+			this.imagenode.style.top = this.imagenode.offsetTop + this.plansudu + 5 + "px";
+		}
 	}
-	function browserRedirect() {
-		// var sUserAgent = navigator.userAgent.toLowerCase();
-		// var bIsIpad = sUserAgent.match(/ipad/i) == 'ipad';
-		// var bIsIphone = sUserAgent.match(/iphone os/i) == 'iphone os';
-		// var bIsMidp = sUserAgent.match(/midp/i) == 'midp';
-		// var bIsUc7 = sUserAgent.match(/rv:1.2.3.4/i) == 'rv:1.2.3.4';
-		// var bIsUc = sUserAgent.match(/ucweb/i) == 'web';
-		// var bIsCE = sUserAgent.match(/windows ce/i) == 'windows ce';
-		// var bIsWM = sUserAgent.match(/windows mobile/i) == 'windows mobile';
-
-		// if (bIsIpad || bIsIphone || bIsMidp || bIsUc7 || bIsUc || bIsCE || bIsWM) {
-		// 	return true //移动端
-		// } else {
-		// 	return false //pc端
-		// }
-
-		// if (/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
-		// 	return true //移动端
-		// } else {
-		// 	return false //pc端
-		// }
-
-		if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) {
-			return true //移动端
-		} else if (/(Android)/i.test(navigator.userAgent)) {
-			return true //移动端
-		} else {
-			return false //移动端
-		};
-
+	this.init = function () {
+		this.imagenode = document.createElement("img");
+		this.imagenode.style.left = this.planX + "px";
+		this.imagenode.style.top = this.planY + "px";
+		this.imagenode.src = imagesrc;
+		mainDiv.appendChild(this.imagenode);
 	}
-	browserRedirect() ? alert('检测出您使用的是移动设备') : alert('检测出您使用的是PC设备');
-	Game.prototype = {
-		init: function () {
-			this.start();
-		},
-		start: function () {
-			var that = this;
-			this.startGame.startRun = this.startGameRun(that);
-			this.addEvent(this.startGame, "click", this.startGame.startRun);
-		},
-		startGameRun: function (that) {
-			return function (e) {
-				that.status = true;
-				that.gameStart.style.display = "none";
-				that.gameEnter.style.display = "block";
-				that.removeEvent(that.startGame, "click", that.startGame.startRun);
-				that.myMove();
-				that.shot();
-				that.enemyAppear();
+	this.init();
+}
+
+/*
+创建子弹类
+ */
+function bullet(X, Y, sizeX, sizeY, imagesrc) {
+	this.bulletX = X;
+	this.bulletY = Y;
+	this.bulletimage = null;
+	this.bulletattach = 1;
+	this.bulletsizeX = sizeX;
+	this.bulletsizeY = sizeY;
+	//行为
+	/*
+	 移动行为
+	 */
+	this.bulletmove = function () {
+		this.bulletimage.style.top = this.bulletimage.offsetTop - 20 + "px";
+	}
+	this.init = function () {
+		this.bulletimage = document.createElement("img");
+		this.bulletimage.style.left = this.bulletX + "px";
+		this.bulletimage.style.top = this.bulletY + "px";
+		this.bulletimage.src = imagesrc;
+		mainDiv.appendChild(this.bulletimage);
+	}
+	this.init();
+}
+
+/*
+ 创建单行子弹类
+ */
+function oddbullet(X, Y) {
+	bullet.call(this, X, Y, 6, 14, "image/bullet1.png");
+}
+
+/*
+创建敌机类
+ */
+function enemy(hp, a, b, sizeX, sizeY, score, dietime, sudu, boomimage, imagesrc) {
+	plan.call(this, hp, random(a, b), -100, sizeX, sizeY, score, dietime, sudu, boomimage, imagesrc);
+}
+//产生min到max之间的随机数
+function random(min, max) {
+	return Math.floor(min + Math.random() * (max - min));
+}
+
+/*
+创建本方飞机类
+ */
+function ourplan(X, Y) {
+	var imagesrc = "image/我的飞机.gif";
+	plan.call(this, 1, X, Y, 66, 80, 0, 660, 0, "image/本方飞机爆炸.gif", imagesrc);
+	this.imagenode.setAttribute('id', 'ourplan');
+}
+
+/*
+ 创建本方飞机
+ */
+var selfplan = new ourplan(120, 485);
+//移动事件
+var ourPlan = document.getElementById('ourplan');
+var yidong = function () {
+	var oevent = window.event || arguments[0];
+	oevent.preventDefault();
+	// var chufa = oevent.srcElement || oevent.target;
+	var etype = browserRedirect() ? oevent.touches[0] : oevent;
+	var selfplanX = etype.clientX;
+	var selfplanY = etype.clientY;
+	ourPlan.style.left = selfplanX - selfplan.plansizeX / 2 + "px";
+	ourPlan.style.top = selfplanY - selfplan.plansizeY / 2 + "px";
+	//    document.getElementsByTagName('img')[0].style.left=selfplanX-selfplan.plansizeX/2+"px";
+	//    document.getElementsByTagName('img')[0]..style.top=selfplanY-selfplan.plansizeY/2+"px";
+}
+/*
+暂停事件
+ */
+var number = 0;
+var zanting = function () {
+	if (number == 0) {
+		suspenddiv.style.display = "block";
+		if (document.removeEventListener) {
+			mainDiv.removeEventListener(movetype, yidong, true);
+			bodyobj.removeEventListener(movetype, bianjie, true);
+		}
+		else if (document.detachEvent) {
+			mainDiv.detachEvent("onmousemove", yidong);
+			bodyobj.detachEvent("onmousemove", bianjie);
+		}
+		clearInterval(set);
+		number = 1;
+	}
+	else {
+		suspenddiv.style.display = "none";
+		if (document.addEventListener) {
+			mainDiv.addEventListener(movetype, yidong, true);
+			bodyobj.addEventListener(movetype, bianjie, true);
+		}
+		else if (document.attachEvent) {
+			mainDiv.attachEvent("onmousemove", yidong);
+			bodyobj.attachEvent("onmousemove", bianjie);
+		}
+		set = setInterval(start, 20);
+		number = 0;
+	}
+}
+//判断本方飞机是否移出边界,如果移出边界,则取消mousemove事件,反之加上mousemove事件
+var bianjie = function () {
+	var oevent = window.event || arguments[0];
+	oevent.preventDefault();
+	// var chufa = oevent.srcElement || oevent.target;
+	var etype = browserRedirect() ? oevent.touches[0] : oevent;
+	var bodyobjX = etype.clientX;
+	var bodyobjY = etype.clientY;
+	if (bodyobjX < 33 || bodyobjX > window.innerWidth-33 || bodyobjY < 40 || bodyobjY > window.innerHeight-40) {
+		if (document.removeEventListener) {
+			mainDiv.removeEventListener(movetype, yidong, true);
+		}
+		else if (document.detachEvent) {
+			mainDiv.detachEvent("onmousemove", yidong);
+		} 
+	}else {
+		if (document.addEventListener) {
+			mainDiv.addEventListener(movetype, yidong, true);
+		}
+		else if (document.attachEvent) {
+			mainDiv.attachEvent("nomousemove", yidong);
+		}
+	}
+}
+//暂停界面重新开始事件
+//function chongxinkaishi(){
+//    location.reload(true);
+//    startdiv.style.display="none";
+//    maindiv.style.display="block";
+//}
+var bodyobj = document.getElementsByTagName("body")[0];
+if (document.addEventListener) {
+	//为本方飞机添加移动和暂停
+	mainDiv.addEventListener(movetype, yidong, true);
+	//为本方飞机添加暂停事件
+	// selfplan.imagenode.addEventListener("click", zanting, true);
+	//为body添加判断本方飞机移出边界事件
+	bodyobj.addEventListener(movetype, bianjie, true);
+	//为暂停界面的继续按钮添加暂停事件
+	suspenddiv.getElementsByTagName("button")[0].addEventListener("click", zanting, true);
+	//    suspenddiv.getElementsByTagName("button")[1].addEventListener("click",chongxinkaishi,true);
+	//为暂停界面的返回主页按钮添加事件
+	suspenddiv.getElementsByTagName("button")[1].addEventListener("click", jixu, true);
+}
+else if (document.attachEvent) {
+	//为本方飞机添加移动
+	mainDiv.attachEvent("onmousemove", yidong);
+	//为本方飞机添加暂停事件
+	// selfplan.imagenode.attachEvent("onclick", zanting);
+	//为body添加判断本方飞机移出边界事件
+	bodyobj.attachEvent("onmousemove", bianjie);
+	//为暂停界面的继续按钮添加暂停事件
+	suspenddiv.getElementsByTagName("button")[0].attachEvent("onclick", zanting);
+	//    suspenddiv.getElementsByTagName("button")[1].attachEvent("click",chongxinkaishi,true);
+	//为暂停界面的返回主页按钮添加事件
+	suspenddiv.getElementsByTagName("button")[1].attachEvent("click", jixu, true);
+}
+//初始化隐藏本方飞机
+selfplan.imagenode.style.display = "none";
+
+/*
+敌机对象数组
+ */
+var enemys = [];
+
+/*
+子弹对象数组
+ */
+var bullets = [];
+var mark = 0;
+var mark1 = 0;
+var backgroundPositionY = 0;
+/*
+开始函数
+ */
+function start() {
+	mainDiv.style.backgroundPositionY = backgroundPositionY + "px";
+	backgroundPositionY += 0.5;
+	if (backgroundPositionY == 568) {
+		backgroundPositionY = 0;
+	}
+	mark++;
+    /*
+    创建敌方飞机
+     */
+
+	if (mark == 20) {
+		mark1++;
+		//中飞机
+		if (mark1 % 5 == 0) {
+			enemys.push(new enemy(6, 25, window.innerWidth, 46, 60, 5000, 360, random(1, 3), "image/中飞机爆炸.gif", "image/enemy3_fly_1.png"));
+		}
+		//大飞机
+		if (mark1 == 20) {
+			enemys.push(new enemy(12, 57, window.innerWidth, 110, 164, 30000, 540, 1, "image/大飞机爆炸.gif", "image/enemy2_fly_1.png"));
+			mark1 = 0;
+		}
+		//小飞机
+		else {
+			enemys.push(new enemy(1, 19, window.innerWidth, 34, 24, 1000, 360, random(1, 4), "image/小飞机爆炸.gif", "image/enemy1_fly_1.png"));
+		}
+		mark = 0;
+	}
+
+	/*
+	移动敌方飞机
+	 */
+	var enemyslen = enemys.length;
+	for (var i = 0; i < enemyslen; i++) {
+		if (enemys[i].planisdie != true) {
+			enemys[i].planmove();
+		}
+		/*
+		 如果敌机超出边界,删除敌机
+		 */
+		if (enemys[i].imagenode.offsetTop > 568) {
+			mainDiv.removeChild(enemys[i].imagenode);
+			enemys.splice(i, 1);
+			enemyslen--;
+		}
+		//当敌机死亡标记为true时，经过一段时间后清除敌机
+		if (enemys[i].planisdie == true) {
+			enemys[i].plandietimes += 20;
+			if (enemys[i].plandietimes == enemys[i].plandietime) {
+				mainDiv.removeChild(enemys[i].imagenode);
+				enemys.splice(i, 1);
+				enemyslen--;
 			}
-		},
-		myMove: function (evt) {
-			var that = this;
-			document.mousemoveRun = this.myMoveRun(that);
-			var type = browserRedirect() ? "touchmove" : "mousemove";
-			this.addEvent(document, type, document.mousemoveRun);
-		},
-		myMoveRun: function (that) {
-			return function (evt) {
-				// 执行事件
-				var e = evt || window.event;
-				e.preventDefault();
-				var etype = browserRedirect() ? e.touches[0] : e;
-				var mouse_x = e.x || etype.pageX
-					, mouse_y = e.y || etype.pageY;
-				var myPlaneW = that.getStyle(that.myPlane, "width")
-					, myPlaneH = that.getStyle(that.myPlane, "height");
-				var gameW = that.getStyle(that.game, "width")
-					, gameH = that.getStyle(that.game, "height");
-				var my_x = mouse_x - myPlaneW / 2 - that.getStyle(that.game, "marginLeft");
-				var my_y = mouse_y - myPlaneH / 2 - that.getStyle(that.game, "marginTop");
-				if (my_x <= 0) {
-					my_x = 0;
-				} else if (my_x >= gameW - myPlaneW) {
-					my_x = gameW - myPlaneW;
-				}
-				if (my_y <= 0) {
-					my_y = 0;
-				} else if (my_y >= gameH - myPlaneH) {
-					my_y = gameH - myPlaneH;
-				}
-				that.myPlane.style.left = my_x + "px";
-				that.myPlane.style.top = my_y + "px";
-				// 删除事件
-				// that.removeEvent(document,"mousemove",document.mousemoveRun);
-			}
-		},
-		shot: function () {
-			var that = this;
-			setInterval(function () {
-				that.createBullet(that);
-			}, 100);
-		},
-		createBullet: function () {
-			var bullet = new Image();
-			bullet.src = "image/bullet1.png";
-			bullet.className = "b";
-			bullet.style.top = this.myPlane.offsetTop - 14 + "px";
-			bullet.style.left = this.myPlane.offsetLeft - 3 + this.myPlane.offsetWidth / 2 + "px";
-			this.bulletsParent.appendChild(bullet);
-			this.bulletMove(bullet, "top");
-			this.bullets.push(bullet);
-		},
-		bulletMove: function (ele, attr) {
-			var that = this;
-			var speed = -4;
-			ele.timer = setInterval(function () {
-				var moveVal = that.getStyle(ele, attr);
-				if (moveVal <= -ele.offsetHeight) {
-					ele.parentNode.removeChild(ele);
-					that.bullets.shift();
-				} else {
-					ele.style[attr] = moveVal + speed + "px";
-				}
-			}, 10);
-		},
-		danger: function (ele, enemyW, enemyH) {
-			var that = this;
-			for (var i = 0; i < that.bullets.length; i++) {
-				var bullet = that.bullets[i];
-				var bulletL = bullet.offsetLeft
-					, bulletT = bullet.offsetTop;
-				// 检测每一颗子弹和每一个运动的敌机是否碰撞
-				var enemyL = ele.offsetLeft
-					, enemyT = ele.offsetTop;
-				if (bulletT <= enemyT + enemyH && bulletL + that.bulletW >= enemyL && bulletL <= enemyL + enemyW && bulletT + that.bulletH >= enemyT) {
-					if (ele && bullet.parentNode) {
-						that.bullets.splice(i, 1);
-						bullet.parentNode.removeChild(bullet);
-						ele.hp--;
-						if (ele.hp <= 0) {
-							ele.src = ele.src.replace(/(\w+\/)([a-zA-Z]+)(\d{1}\.)([a-zA-Z]+)/, function ($1, $2, $3, $4, $5) {
-								$3 = "bz";
-								$5 = "gif";
-								return $2 + $3 + $4 + $5;
-							});
-							setTimeout(function () {
-								if (ele.parentNode) {
-									ele.parentNode.removeChild(ele);
-									that.scores += ele.s;
-									that.scoresContent.innerHTML = that.scores;
-								}
-							}, 50);
+		}
+	}
+
+	/*
+	创建子弹
+	*/
+	if (mark % 5 == 0) {
+		bullets.push(new oddbullet(parseInt(selfplan.imagenode.style.left) + 31, parseInt(selfplan.imagenode.style.top) - 10));
+	}
+
+	/*
+	移动子弹
+	*/
+	var bulletslen = bullets.length;
+	for (var i = 0; i < bulletslen; i++) {
+		bullets[i].bulletmove();
+		/*
+		如果子弹超出边界,删除子弹
+		*/
+		if (bullets[i].bulletimage.offsetTop < 0) {
+			mainDiv.removeChild(bullets[i].bulletimage);
+			bullets.splice(i, 1);
+			bulletslen--;
+		}
+	}
+
+	/*
+	碰撞判断
+	*/
+	for (var k = 0; k < bulletslen; k++) {
+		for (var j = 0; j < enemyslen; j++) {
+			//判断碰撞本方飞机
+			if (enemys[j].planisdie == false) {
+				if (enemys[j].imagenode.offsetLeft + enemys[j].plansizeX >= selfplan.imagenode.offsetLeft && enemys[j].imagenode.offsetLeft <= selfplan.imagenode.offsetLeft + selfplan.plansizeX) {
+					if (enemys[j].imagenode.offsetTop + enemys[j].plansizeY >= selfplan.imagenode.offsetTop + 40 && enemys[j].imagenode.offsetTop <= selfplan.imagenode.offsetTop - 20 + selfplan.plansizeY) {
+						//碰撞本方飞机，游戏结束，统计分数
+						selfplan.imagenode.src = "image/本方飞机爆炸.gif";
+						enddiv.style.display = "block";
+						planscore.innerHTML = scores;
+						if (document.removeEventListener) {
+							mainDiv.removeEventListener(movetype, yidong, true);
+							bodyobj.removeEventListener(movetype, bianjie, true);
 						}
+						else if (document.detachEvent) {
+							mainDiv.detachEvent("onmousemove", yidong);
+							bodyobj.removeEventListener(movetype, bianjie, true);
+						}
+						clearInterval(set);
+					}
+				}
+				//判断子弹与敌机碰撞
+				if ((bullets[k].bulletimage.offsetLeft + bullets[k].bulletsizeX > enemys[j].imagenode.offsetLeft) && (bullets[k].bulletimage.offsetLeft < enemys[j].imagenode.offsetLeft + enemys[j].plansizeX)) {
+					if (bullets[k].bulletimage.offsetTop <= enemys[j].imagenode.offsetTop + enemys[j].plansizeY && bullets[k].bulletimage.offsetTop + bullets[k].bulletsizeY >= enemys[j].imagenode.offsetTop) {
+						//敌机血量减子弹攻击力
+						enemys[j].planhp = enemys[j].planhp - bullets[k].bulletattach;
+						//敌机血量为0，敌机图片换为爆炸图片，死亡标记为true，计分
+						if (enemys[j].planhp == 0) {
+							scores = scores + enemys[j].planscore;
+							scorelabel.innerHTML = scores;
+							enemys[j].imagenode.src = enemys[j].planboomimage;
+							enemys[j].planisdie = true;
+						}
+						//删除子弹
+						mainDiv.removeChild(bullets[k].bulletimage);
+						bullets.splice(k, 1);
+						bulletslen--;
+						break;
 					}
 				}
 			}
-		},
-		enemyAppear: function () {
-			var that = this;
-			var a = setInterval(function () {
-				that.createPlane();
-			}, 1000);
-		},
-		createPlane: function () {
-			var appearChancing = [1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2];
-			var img = new Image();
-			// 敌机
-			// 敌机类型 
-			var enemyT = appearChancing[Math.floor(Math.random() * appearChancing.length)];
-			var enemyName = "enemy" + enemyT;
-			img.src = "image/" + enemyName + ".png";
-			var pObj = this.enemyObj["enemy" + enemyT];
-			img.style.width = pObj.width;
-			img.style.height = pObj.height;
-			img.style.top = "-" + pObj.height;
-			img.style.left = Math.floor(Math.random() * (this.game.offsetWidth - parseInt(pObj.width))) + "px";
-			img.hp = Math.pow(enemyT, 3);
-			img.s = pObj.score;
-			this.enemy.appendChild(img);
-			this.enemyPlaneMove(img, "top", enemyT);
-
-		},
-		enemyPlaneMove: function (ele, attr, enemyType) {
-			var that = this;
-			var speed = null;
-			if (enemyType == 1) { // 大飞机
-				speed = 1.5;
-			} else if (enemyType == 2) { // 中飞机
-				speed = 1;
-			} else {
-				speed = 0.5;
-			}
-			var enemyW = ele.offsetWidth
-				, enemyH = ele.offsetHeight;
-			ele.timer = setInterval(function () {
-				var moveVal = that.getStyle(ele, attr);
-				// 敌机的高度
-				if (moveVal >= that.game.offsetHeight + ele.offsetHeight) {
-					if (ele)
-						ele.parentNode.removeChild(ele);
-				} else {
-					ele.style[attr] = moveVal + speed + "px";
-				}
-				that.danger(ele, enemyW, enemyH);
-
-			}, 10);
-		},
-		addEvent: function (ele, clickName, fn) {
-			var that = this;
-			if (ele.attachEvent) {
-				ele.attachEvent("on" + clickName, fn);
-			} else if (ele.addEventListener) {
-				ele.addEventListener(clickName, fn, false);
-			} else {
-				ele["on" + clickName] = fn;
-			}
-		},
-		removeEvent: function (ele, clickName, fn) {
-			if (ele.detachEvent) {
-				ele.detachEvent("on" + clickName, fn);
-			} else if (ele.addEventListener) {
-				ele.removeEventListener(clickName, fn, false);
-			} else {
-				ele["on" + clickName] = null;
-			}
-		},
-		getStyle: function (ele, attr) {
-			var res = null;
-			if (ele.currentStyle) {
-				res = ele.currentStyle[attr];
-			} else {
-				res = window.getComputedStyle(ele, null)[attr];
-			}
-			return parseFloat(res);
 		}
 	}
-	Game.$ = function (idName) {
-		return document.getElementById(idName);
-	}
-	new Game();
 }
+//暂停
+zantingbutton.addEventListener("click", zanting, true);
+/*
+开始游戏按钮点击事件
+ */
+var set;
+function begin() {
+	startdiv.style.display = "none";
+	mainDiv.style.display = "block";
+	selfplan.imagenode.style.display = "block";
+	scorediv.style.display = "block";
+    /*
+     调用开始函数
+     */
+	set = setInterval(start, 20);
+}
+//游戏结束后点击继续按钮事件
+function jixu() {
+	location.reload(true);
+}
+
+/*
+    完成界面的初始化
+    敌方小飞机一个
+    我方飞机一个
+ */

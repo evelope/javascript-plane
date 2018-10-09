@@ -1,31 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<meta charset="UTF-8">
-	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" />
+	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
 	<title>打飞机</title>
 	<link rel="stylesheet" href="style.css">
-	<script src="plane.js"></script>
 </head>
+
 <body>
-	<div id="game">
-		<div id="gameStart">
-			<span>开始游戏</span>
+	<div id="contentdiv">
+		<div id="startdiv">
+			<button onclick="begin()">开始游戏</button>
+			<span id="shebei"></span>
 		</div>
-		<div id="gameEnter">
-			<div id="scoreTotal">
-				<p>得分：<span>0</span> 分</p>
+		<div id="maindiv">
+			<div id="scorediv">
+				<label>分数：</label>
+				<label id="label">0</label>
 			</div>
-			<div id="myPlane">
-				<img src="image/my.gif" alt="">
+			<div id="zanting">⏸</div>
+			<div id="suspenddiv">
+				<button>继续</button>
+				<br/>
+				<!-- <button>重新开始</button>
+				<br/> -->
+				<button>回到主页</button>
 			</div>
-			<div id="bullets">
-				
-			</div>
-			<div id="enemy">
-				
+			<div id="enddiv">
+				<p class="plantext">飞机大战分数</p>
+				<p id="planscore">0</p>
+				<div>
+					<button onclick="jixu()">继续</button>
+				</div>
 			</div>
 		</div>
 	</div>
+	<script src="plane.js"></script>
 </body>
+
 </html>
