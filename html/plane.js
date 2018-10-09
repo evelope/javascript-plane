@@ -1,5 +1,7 @@
 //获得主界面
 var mainDiv = document.getElementById("maindiv");
+//获得界面偏移元素
+var contentdiv = document.getElementById("contentdiv");
 //获得开始界面
 var startdiv = document.getElementById("startdiv");
 //获得游戏中分数显示界面
@@ -168,7 +170,7 @@ var yidong = function () {
 	oevent.preventDefault();
 	// var chufa = oevent.srcElement || oevent.target;
 	var etype = browserRedirect() ? oevent.touches[0] : oevent;
-	var selfplanX = etype.clientX;
+	var selfplanX = etype.clientX-contentdiv.getBoundingClientRect().left;
 	var selfplanY = etype.clientY;
 	ourPlan.style.left = selfplanX - selfplan.plansizeX / 2 + "px";
 	ourPlan.style.top = selfplanY - selfplan.plansizeY / 2 + "px";
@@ -213,7 +215,7 @@ var bianjie = function () {
 	oevent.preventDefault();
 	// var chufa = oevent.srcElement || oevent.target;
 	var etype = browserRedirect() ? oevent.touches[0] : oevent;
-	var bodyobjX = etype.clientX;
+	var bodyobjX = etype.clientX-contentdiv.getBoundingClientRect().left;
 	var bodyobjY = etype.clientY;
 	if (bodyobjX < 33 || bodyobjX > window.innerWidth-33 || bodyobjY < 40 || bodyobjY > window.innerHeight-40) {
 		if (document.removeEventListener) {
@@ -297,16 +299,16 @@ function start() {
 		mark1++;
 		//中飞机
 		if (mark1 % 5 == 0) {
-			enemys.push(new enemy(6, 25, window.innerWidth, 46, 60, 5000, 360, random(1, 3), "image/中飞机爆炸.gif", "image/enemy3_fly_1.png"));
+			enemys.push(new enemy(6, 25, window.innerWidth-25, 46, 60, 5000, 360, random(1, 3), "image/中飞机爆炸.gif", "image/enemy3_fly_1.png"));
 		}
 		//大飞机
 		if (mark1 == 20) {
-			enemys.push(new enemy(12, 57, window.innerWidth, 110, 164, 30000, 540, 1, "image/大飞机爆炸.gif", "image/enemy2_fly_1.png"));
+			enemys.push(new enemy(12, 57, window.innerWidth-57, 110, 164, 30000, 540, 1, "image/大飞机爆炸.gif", "image/enemy2_fly_1.png"));
 			mark1 = 0;
 		}
 		//小飞机
 		else {
-			enemys.push(new enemy(1, 19, window.innerWidth, 34, 24, 1000, 360, random(1, 4), "image/小飞机爆炸.gif", "image/enemy1_fly_1.png"));
+			enemys.push(new enemy(1, 19, window.innerWidth-19, 34, 24, 1000, 360, random(1, 4), "image/小飞机爆炸.gif", "image/enemy1_fly_1.png"));
 		}
 		mark = 0;
 	}
