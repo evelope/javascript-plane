@@ -308,7 +308,7 @@ function start() {
 		}
 		//小飞机
 		else {
-			enemys.push(new enemy(1, 19, window.innerWidth-19, 34, 24, 1000, 360, random(1, 4), "image/小飞机爆炸.gif", "image/enemy1_fly_1.png"));
+			enemys.push(new enemy(1, 19, window.innerWidth-19, 34, 24, 1000, 360, random(1, 4), "image/小飞机爆炸.gif", "image/cuihua.png"));
 		}
 		mark = 0;
 	}
